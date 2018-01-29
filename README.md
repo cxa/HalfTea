@@ -100,7 +100,7 @@ We offer some utils to make a command to perform async task or function, check o
 
 ### Subscribe — register what you are interested in
 
-With command you _ask_ to do something, but in the real world, something is out of our control, just like a clock, all we can do is to listen its tick, This is where `subscribe` come in.
+With command you _ask_ to do something, but in the real world, something is out of our control, just like a clock, all we can do is to listen its tick, this is where `subscribe` come in.
 
 ```fsharp
 subscribe = fun _state dispatch ->
@@ -109,4 +109,8 @@ subscribe = fun _state dispatch ->
   t.Start ()
 ```
 
-Check the [Counter](samples/SimpleCounter) example for detail.
+Check the [Counter](samples/Counter) example for detail.
+
+## Usage
+
+Drag `src/HalfTea.fs` to your project. To track version, you may use [paket](https://fsprojects.github.io/Paket/) or git submodules. It's that simple and we have no plan to maintain a NuGet package.
