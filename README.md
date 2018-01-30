@@ -111,6 +111,12 @@ subscribe = fun _state dispatch ->
 
 Check the [Counter](samples/Counter) example for detail.
 
+## FAQ
+
+_Q_: Why mutable class but not immutable record for state?
+
+_A_: Because we need `INotifyPropertyChanged` to inform UI to update. And for the OO-based UI framework (Xamarin.iOS, Xamarin.Droid and Xamarin.Forms), mutable class state is much more fitted.
+
 ## Usage
 
 Drag `src/HalfTea.fs` to your project. To track version, you may use [paket](https://fsprojects.github.io/Paket/) or git submodules. It's that simple and we have no plan to maintain a NuGet package.
