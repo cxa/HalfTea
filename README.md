@@ -119,4 +119,10 @@ _A_: Because we need `INotifyPropertyChanged` to inform UI to update. And for th
 
 ## Usage
 
-Drag `src/HalfTea.fs` to your project. To track version, you may use [paket](https://fsprojects.github.io/Paket/) or git submodules. It's that simple and we have no plan to maintain a NuGet package.
+### Use source directly
+
+Drag `src/HalfTea.fs` to your project. To track version, you may use [paket](https://fsprojects.github.io/Paket/) or git submodules.
+
+### NuGet
+
+Get from <https://www.nuget.org/packages/HalfTea/>
