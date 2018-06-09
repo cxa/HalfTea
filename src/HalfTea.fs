@@ -18,7 +18,7 @@ module State =
       |> Array.map (fun (p: PropertyInfo) ->
         sprintf "%A = %A"
           p.Name
-          <| if p.CanRead then p.GetValue(x, null) else "Not Readable" :> obj
+          (if p.CanRead then p.GetValue(x, null) else "Not Readable" :> obj)
         )
       |> String.concat "\n"
       |> sprintf "\n%A"
@@ -38,9 +38,9 @@ module State =
       (target :?> INotifyPropertyChanged).PropertyChanged
       |> Observable.filter (fun args -> args.PropertyName = propInfo.Name)
       |> Observable.add (fun _ ->
-        binder <| getPropValue ()
+        binder (getPropValue ())
       )
-      binder <| getPropValue ()
+      binder (getPropValue ())
     | _ ->
       failwith "Expression must be a property getter"
 
@@ -123,8 +123,8 @@ module Cmd =
       let r =
         match cancellationToken with
         | Some token -> Async.RunSynchronously (task (), cancellationToken=token)
-        | None -> Async.RunSynchronously <| task ()
-      dispatch <| ofSuccess r
+        | None -> Async.RunSynchronously (task ())
+      dispatch (ofSuccess r)
     }
 
   let ofAsync' task ofSuccess
@@ -134,7 +134,7 @@ module Cmd =
 
   let ofCancellableAsync' task ofSuccess cancellationToken
     : Cmd<'msg> =
-    let bind = dispatchAsync' task ofSuccess <| Some cancellationToken
+    let bind = dispatchAsync' task ofSuccess (Some cancellationToken)
     [ fun dispatch ->
       Async.StartImmediate (bind dispatch, cancellationToken)
     ]
@@ -145,15 +145,15 @@ module Cmd =
               dispatch
     : Cmd<'msg> =
     let bind =
-      try ofSuccess >> dispatch <| func ()
-      with e -> ofError >> dispatch <| e
+      try ofSuccess >> dispatch (func ())
+      with e -> ofError >> (dispatch e)
     [bind]
 
   let ofFunc' (func: unit -> _)
                   (ofSuccess: _ -> 'msg)
                   dispatch
     : Cmd<'msg> =
-    [ofSuccess >> dispatch <| func ()]
+    [ofSuccess >> (dispatch func ())]
 
 module Component =
   type T<'props, 'state, 'msg> =
@@ -216,7 +216,7 @@ module Component =
         } = ``component``
     let cur = System.Threading.SynchronizationContext.Current
     let state, initialCmd = init props
-    let mailbox = MailboxProcessor.Start <| fun inbox ->
+    let mailbox = MailboxProcessor.Start (fun inbox ->
       let rec loop () = async {
         let! msg = inbox.Receive ()
         do
@@ -227,6 +227,7 @@ module Component =
         return! loop ()
       }
       loop ()
+    )
     setupView props state mailbox.Post
     subscribe props state mailbox.Post
     initialCmd
@@ -234,18 +235,21 @@ module Component =
 
   let runWithView props (view: IView<'props, 'state, 'msg>)
                         (``component``: T<'props, 'state, 'msg>) =
-    run props ``component`` <| fun props state dispatch ->
+    run props ``component`` (fun props state dispatch ->
       view.BindState props state
       view.Subscribe props state dispatch
+    )
 
   let runWithView' props (view: IView'<'state, 'msg>)
                          (``component``: T<'props, 'state, 'msg>) =
-    run props ``component`` <| fun _ state dispatch ->
+    run props ``component`` (fun _ state dispatch ->
       view.BindState state
       view.Subscribe state dispatch
+    )
 
   let runWithView'' (view: IView'<'state, 'msg>)
                     (``component``: T<unit, 'state, 'msg>) =
-    run () ``component`` <| fun _ state dispatch ->
+    run () ``component`` (fun _ state dispatch ->
       view.BindState state
       view.Subscribe state dispatch
+    )
