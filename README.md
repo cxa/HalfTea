@@ -1,6 +1,8 @@
 # HalfTea
 
-Inspired by [TEA (The Elm Architecture)](https://guide.elm-lang.org/architecture/) but for Xamarin stack, in an unobstrusive way.
+**Deprecated. Use [Mu](https://github.com/cxa/Mu).**
+
+Inspired by [TEA (The Elm Architecture)](https://guide.elm-lang.org/architecture/) but for Xamarin stack, in an unobtrusive way.
 
 ## UI Component Basis
 
